@@ -1,0 +1,11 @@
+name: ChatRename
+version: '${version}'
+main: com.babiesjulius.chatrename.Main
+api-version: 1.19
+prefix: ChatRename
+authors: [ JuliusBabies ]
+description: This Plugin will rename players in the chat.
+
+commands:
+  rename:
+    description: Rename yourself in the chat.
