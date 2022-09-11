@@ -1,7 +1,7 @@
 package com.babiesjulius.chatrename.commands;
 
+import com.babiesjulius.chatrename.Strings;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,39 +19,44 @@ public class RenameCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String[] args) {
         Player player;
+
         if (args.length == 0) {
             player = (Player) sender;
+            Strings target = new Strings(player.getLocale());
             getInstance().getConfig().set(player.getUniqueId().toString(), "");
             getInstance().saveConfig();
-            sender.sendMessage(normal("Dein Chatname wurde auf deinen Spielernamen zurückgesetzt"));
+            sender.sendMessage(normal(target.username_reset()));
             player.setDisplayName(player.getName());
             player.setCustomName(player.getName());
             player.setPlayerListName(player.getName());
         } else if (args.length == 1) {
             player = (Player) sender;
+            Strings target = new Strings(player.getLocale());
             if (Bukkit.getPlayer(args[0]) == null) {
                 getInstance().getConfig().set(player.getUniqueId().toString(), args[0]);
                 getInstance().saveConfig();
-                player.sendMessage(normal("Dein Chatname wurde auf '" + ChatColor.ITALIC + args[0] + ChatColor.RESET + ChatColor.WHITE + "' gesetzt"));
+                player.sendMessage(normal(String.format(target.username_set_to(), args[0])));
                 player.setDisplayName(args[0]);
                 player.setCustomName(args[0]);
                 player.setPlayerListName(args[0]);
             } else {
-                sender.sendMessage(error("Du darfst dich nicht als andere Spieler ausgeben"));
+                sender.sendMessage(error(target.username_already_in_use()));
             }
         } else if (args.length == 2) {
+            Strings senderStrings = sender instanceof Player ? new Strings(((Player) sender).getLocale()) : new Strings("en_US");
             if (sender.isOp()) {
                 player = Bukkit.getPlayer(args[1]);
                 assert player != null;
+                Strings target = new Strings(player.getLocale());
                 getInstance().getConfig().set(player.getUniqueId().toString(), args[0]);
                 getInstance().saveConfig();
                 player.setDisplayName(args[0]);
                 player.setCustomName(args[0]);
                 player.setPlayerListName(args[0]);
-                sender.sendMessage(ChatColor.WHITE + "[" + ChatColor.GREEN + "ChatRename" + ChatColor.WHITE + "] Der Chatname von " + player.getName() + " wurde auf " + args[0] + " gesetzt");
-                player.sendMessage(ChatColor.WHITE + "[" + ChatColor.GREEN + "ChatRename" + ChatColor.WHITE + "] Dein Chatname wurde von " + sender.getName() + " auf " + args[0] + " gesetzt");
+                sender.sendMessage(normal(String.format(senderStrings.you_set_username_to(), args[1], args[0])));
+                player.sendMessage(normal(String.format(target.username_set_by(), sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName(), args[0])));
             } else {
-                sender.sendMessage(error("Du hast nicht die Rechte um andere Spieler umzubenennen"));
+                sender.sendMessage(error(senderStrings.no_permission()));
             }
 
         }
@@ -60,7 +65,7 @@ public class RenameCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String[] args) {
         List<String> arguments = new ArrayList<>();
         if (args.length == 2) {
             for (Player player : Bukkit.getOnlinePlayers()) {
