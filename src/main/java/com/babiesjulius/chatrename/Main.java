@@ -2,6 +2,7 @@ package com.babiesjulius.chatrename;
 
 import com.babiesjulius.chatrename.commands.RenameCommand;
 import com.babiesjulius.chatrename.listeners.ChatListener;
+import com.babiesjulius.chatrename.listeners.JoinListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,6 +26,7 @@ public final class Main extends JavaPlugin {
         getCommand("rename").setTabCompleter(new RenameCommand());
 
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
+        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
     }
 
     @Override

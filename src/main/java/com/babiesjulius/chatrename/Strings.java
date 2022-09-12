@@ -1,5 +1,7 @@
 package com.babiesjulius.chatrename;
 
+import org.bukkit.ChatColor;
+
 public class Strings {
 
     private final String locale;
@@ -59,6 +61,15 @@ public class Strings {
                 return "Du hast nicht die Berechtigung dazu";
             default:
                 return "You don't have the permission to do that";
+        }
+    }
+
+    public String joined() {
+        switch (locale) {
+            case "de_DE":
+                return ChatColor.GREEN + "%s ist beigetreten";
+            default:
+                return ChatColor.GREEN + "%s joined the game";
         }
     }
 }
